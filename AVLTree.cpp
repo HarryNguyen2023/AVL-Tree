@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include "AVLTree.h"
 
 // Function to create the new node in the tree
@@ -193,6 +195,8 @@ Node<T>* AVL<T>::delNode(Node<T>* node, T data)
             node->right = delNode(node->right, data);
         }
     }
+    if(node == NULL)
+        return NULL;
     // Update the height of the node
     node->heigth = 1 + max(getHeight(node->left), getHeight(node->right));
     // Check the balance factor of the node and rearrange the key if necessary
@@ -249,6 +253,23 @@ void AVL<T>::print2D(Node<T>* node, int COUNT, int space)
     print2D(node->left, COUNT, space);    
 }
 
+// Function to find the maximum element in the tree
+template <typename T>
+T AVL<T>::findMax(Node<T>* node)
+{
+    // Check if the tree is empty
+    if(node->right == NULL)
+        return node->data;    
+    return findMax(node->right);
+}
+
+// General function to find the maximum value element in the tree
+template <typename T>
+T AVL<T>::findMax()
+{
+    return findMax(root);
+}
+
 // Function th print the shape of the tree
 template <typename T>
 void AVL<T>::printTree()
@@ -256,18 +277,28 @@ void AVL<T>::printTree()
     print2D(root, 10, 0);
 }
 
-// Function to get the node of the tree
+// Function to find the size of the binary tree
 template <typename T>
-Node<T>* AVL<T>::getRoot()
+int AVL<T>::findSize(Node<T>* node)
 {
-    return root;
+    // Check if the tree is empty
+    if(node == NULL)
+        return 0;
+    return findSize(node->left) + 1 + findSize(node->right);
+}
+
+// General function to find the size of the tree
+template <typename T>
+int AVL<T>::findSize()
+{
+    return findSize(root);
 }
 
 int main()
 {
     // Initiate the AVL tree
     AVL<int> avltree;
-    int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 37, 65, 41, 26, 98, 100, 103, 77};
+    int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 330, 37, 65, 41, 26, 98, 100, 103, 77};
     // Insert node
     for(int i = 0; i < sizeof(random)/4; ++i)
         avltree.insertNode(random[i]);
@@ -281,5 +312,27 @@ int main()
     avltree.delNode(65);
     // Display
     avltree.printTree();
+    // Display the maximum value in the tree
+    std::cout<<"The maximum value in the tree is: "<<avltree.findMax()<<std::endl;
+    std::cout<<"The size of the tree is: "<<avltree.findSize()<<std::endl;
+    
+    // String version
+    // AVL<std::string> avltree;
+    // //int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 37, 65, 41, 26, 98, 100, 103, 77};
+    // std::vector<std::string> str_vect = {"Gia", "Tran", "Phu", "Chau", "Thomas", "Kevin", "Khoa", "Nick", "Duy"};
+    // // Insert node
+    // for(int i = 0; i < str_vect.size(); ++i)
+    //     avltree.insertNode(str_vect[i]);
+    // // Print the tree
+    // avltree.printTree();
+    // // Search for a few node
+    // std::cout<<"Node Gia is "<<(avltree.searchNode("Gia") ? "" : "not ")<<"in the tree"<<std::endl;
+    // std::cout<<"Node Tran is "<<(avltree.searchNode("Tran") ? "" : "not ")<<"in the tree"<<std::endl;
+    // // Delete some node
+    // avltree.delNode("Kevin");
+    // avltree.delNode("Nick");
+    // // Display
+    // avltree.printTree();
+
     return 0;
 }

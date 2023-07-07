@@ -27,10 +27,13 @@ class AVL:public Node<T>
         Node<T>* newNode(T data);
         Node<T>* insertNode(Node<T>* node, T data);
         Node<T>* searchNode(Node<T>* node, T data);
+        T findMax(Node<T>* node);
+        int findSize(Node<T>* node);
     public:        
         void printTree();            
-        Node<T>* getRoot();
         void insertNode(T data);
         void delNode(T data);
         bool searchNode(T data);
+        T findMax();
+        int findSize();
 };
