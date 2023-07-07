@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <queue>
+#include <stack>
 #include "AVLTree.h"
 
 // Function to create the new node in the tree
@@ -294,6 +296,159 @@ int AVL<T>::findSize()
     return findSize(root);
 }
 
+// Function to print the tree in reverse order
+template <typename T>
+void AVL<T>::printReverse()
+{
+    std::queue<Node<T>*> myq;
+    std::stack<T> mystack;
+    Node<T>* temp;
+    // Enqueue the root node into the queue
+    myq.push(root);
+    // Loop through the tree and push them into the queue as well as the stack
+    while(! myq.empty())
+    {
+        temp = myq.front();
+        myq.pop();
+        // Push the right item into the queue first
+        if(temp->right != NULL)
+            myq.push(temp->right);
+        if(temp->left != NULL)
+            myq.push(temp->left);
+        // Push the data of the node into the stack
+        mystack.push(temp->data);
+    }
+    std::cout<<"Element in reverse order: ";
+    // Print the element in reverse order from the stack
+    while(! mystack.empty())
+    {
+        std::cout<<mystack.top()<<" ";
+        mystack.pop();
+    }
+    std::cout<<std::endl;   
+}
+
+// Function to get the number of the level of the tree
+template<typename T>
+int AVL<T>::getLevel()
+{
+    int level = 0;
+    // Initiate the queue
+    std::queue<Node<T>*> myqueue;
+    Node<T>* temp;
+    // Push the root and the first seperated layer
+    myqueue.push(root);
+    myqueue.push(NULL);
+    // Loop
+    while(! myqueue.empty())
+    {
+        // Get the front of the queue
+        temp = myqueue.front();
+        myqueue.pop();
+        // Check the seperated layer
+        if(temp == NULL)
+        {
+            if(! myqueue.empty())
+                myqueue.push(NULL);
+            level++;
+        }
+        else
+        {
+            if(temp->left != NULL)
+                myqueue.push(temp->left);
+            if(temp->right != NULL)
+                myqueue.push(temp->right);
+        }
+    }
+    return level;
+}
+
+// Function to print the tree in zig zag order
+template <typename T>
+void AVL<T>::printZigZag()
+{
+    bool l2r = false;
+    // Initiate the queue
+    std::stack<Node<T>*> currentstack;
+    std::stack<Node<T>*> nextstack;
+    Node<T>* temp = NULL;
+    // Push the root into the queue
+    currentstack.push(root);
+    std::cout<<"Elements of the tree in zig zag order: ";
+    // Loop
+    while(!currentstack.empty())
+    {
+        temp = currentstack.top();
+        currentstack.pop();
+        // Case end of one level
+        if(temp != NULL)
+        {
+            std::cout<<temp->data<<" ";
+            if(l2r)
+            {
+                if(temp->left != NULL) 
+                    nextstack.push(temp->left);
+                if(temp->right != NULL)
+                    nextstack.push(temp->right);
+            }
+            else
+            {
+                if(temp->right != NULL)
+                    nextstack.push(temp->right);
+                if(temp->left != NULL) 
+                    nextstack.push(temp->left);               
+            }
+        }
+        // Change the order and swap the pointer position 
+        if(currentstack.empty())
+        {
+            l2r = ~l2r;
+            currentstack.swap(nextstack);
+        }
+    }
+    std::cout<<std::endl;
+}
+
+// Function to traverse the tree in inorder
+template <typename T>
+void AVL<T>::inorderTraverse(Node<T>* node)
+{
+    if(node == NULL)
+        return;
+    inorderTraverse(node->left);
+    std::cout<<node->data<<" ";
+    inorderTraverse(node->right);
+}
+
+// Function to generally traverse the tree in inorder
+template <typename T>
+void AVL<T>::inorderTraverse()
+{
+    std::cout<<"Element in the inorder: ";
+    inorderTraverse(root);
+    std::cout<<std::endl;
+}
+
+// Function to traverse the tree in preorder
+template <typename T>
+void AVL<T>::preorderTraverse(Node<T>* node)
+{
+    if(node == NULL)
+        return;
+    std::cout<<node->data<<" ";
+    inorderTraverse(node->left);
+    inorderTraverse(node->right);
+}
+
+// Function to generally traverse the tree in inorder
+template <typename T>
+void AVL<T>::preorderTraverse()
+{
+    std::cout<<"Element in the preorder: ";
+    preorderTraverse(root);
+    std::cout<<std::endl;
+}
+
 int main()
 {
     // Initiate the AVL tree
@@ -315,7 +470,11 @@ int main()
     // Display the maximum value in the tree
     std::cout<<"The maximum value in the tree is: "<<avltree.findMax()<<std::endl;
     std::cout<<"The size of the tree is: "<<avltree.findSize()<<std::endl;
-    
+    avltree.printReverse();
+    std::cout<<"The level of the tree is: "<<avltree.getLevel()<<std::endl;
+    avltree.printZigZag();
+    avltree.inorderTraverse();
+    avltree.preorderTraverse();
     // String version
     // AVL<std::string> avltree;
     // //int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 37, 65, 41, 26, 98, 100, 103, 77};

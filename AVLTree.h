@@ -9,7 +9,6 @@ class Node
     Node* right;
 };
 
-
 // Define the general class of the AVL tree
 template <class T>
 class AVL:public Node<T>
@@ -29,6 +28,8 @@ class AVL:public Node<T>
         Node<T>* searchNode(Node<T>* node, T data);
         T findMax(Node<T>* node);
         int findSize(Node<T>* node);
+        void inorderTraverse(Node<T>* node);
+        void preorderTraverse(Node<T>* node);
     public:        
         void printTree();            
         void insertNode(T data);
@@ -36,4 +37,9 @@ class AVL:public Node<T>
         bool searchNode(T data);
         T findMax();
         int findSize();
+        void printReverse();
+        int getLevel();
+        void printZigZag();
+        void inorderTraverse();
+        void preorderTraverse();
 };
