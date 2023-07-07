@@ -30,11 +30,12 @@ class AVL:public Node<T>
         T findMax(Node<T>* node);
         int findSize(Node<T>* node);
         void inorderTraverse(Node<T>* node);
-        bool inorderSave(Node<T>* node, std::ofstream& infile);
+        void inorderSave(Node<T>* node, std::ofstream& infile);
         void preorderTraverse(Node<T>* node);
-        bool preorderSave(Node<T>* node, std::ofstream& prefile); 
-        int fileSize(std::ifstream& file);
-        int readTreeFile(T* inlist, T* prelist, std::ifstream& infile, std::ifstream& prefile);
+        void preorderSave(Node<T>* node, std::ofstream& prefile); 
+        size_t fileSize(std::ifstream& file);
+        T* readInFile(std::ifstream& infile);
+        T* readPreFile(std::ifstream& prefile);
     public:        
         void printTree();            
         void insertNode(T data);

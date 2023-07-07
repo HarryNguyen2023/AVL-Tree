@@ -451,24 +451,38 @@ void AVL<T>::preorderTraverse()
 
 // Function to save the tree in the inorder
 template <typename T>
-bool AVL<T>::inorderSave(Node<T>* node, std::ofstream& infile)
+void AVL<T>::inorderSave(Node<T>* node, std::ofstream& infile)
 {
     if(node == NULL)
-        return true;
-    inorderSave(node->left, infile);
-    infile.write(reinterpret_cast<const char *>(&node->data), sizeof(T));
-    inorderSave(node->right, infile);
+        return;
+    if(node->left != NULL)
+        inorderSave(node->left, infile);
+    infile.write((char*)&(node->data), sizeof(T));
+    if(node->right != NULL)
+        inorderSave(node->right, infile);
+    if(! infile.good())
+    {
+        std::cout<<"ERROR: unable to write the inorder file"<<std::endl;
+        exit(1);
+    }
 }
 
 // Function to save the tree in the preorder
 template <typename T>
-bool AVL<T>::preorderSave(Node<T>* node, std::ofstream& prefile)
+void AVL<T>::preorderSave(Node<T>* node, std::ofstream& prefile)
 {
     if(node == NULL)
-        return true;
-    prefile.write(reinterpret_cast<const char *>(&node->data), sizeof(T));
-    preorderSave(node->left, prefile);
-    preorderSave(node->right, prefile);
+        return;
+    prefile.write((char*)&(node->data), sizeof(T));
+    if(node->left != NULL)
+        preorderSave(node->left, prefile);
+    if(node->right != NULL)
+        preorderSave(node->right, prefile);
+    if(! prefile.good())
+    {
+        std::cout<<"ERROR: unable to write the preorder file"<<std::endl;
+        exit(1);
+    }
 }
 
 // Function to generally save the tree into the file
@@ -477,7 +491,7 @@ bool AVL<T>::treeSave()
 {
     // Initiate 2 files to save the tree
     std::ofstream infile("indata.dat", std::ios::out | std::ios:: binary);
-    std::ofstream prefile("predate.dat", std::ios::out | std::ios::binary);
+    std::ofstream prefile("predata.dat", std::ios::out | std::ios::binary);
     // Check if both file is open
     if(!infile.is_open() || !prefile.is_open())
         return false;
@@ -491,39 +505,46 @@ bool AVL<T>::treeSave()
 
 // Function to get the size of a file
 template <typename T>
-int AVL<T>::fileSize(std::ifstream& file)
+size_t AVL<T>::fileSize(std::ifstream& file)
 {
-    std::streampos begin, end;
-    begin = file.tellg();
     file.seekg(0, std::ios::end);
-    end = file.tellg();
-    return end - begin;
+    return file.tellg();
 }
 
-// Function to read the file and construct 2 lists of inorder and preorder
+// Function to read the inorder file 
 template <typename T>
-int AVL<T>::readTreeFile(T* indat, T* predat, std::ifstream& infile, std::ifstream& prefile)
+T* AVL<T>::readInFile(std::ifstream& infile)
 {
     // Get the size of the file to determine the length of the arrary
     int size = 0;
-    const int len = fileSize(infile)/sizeof(T);
-    // Create 2 dynamic arrays for 2 orders of the tree
-    indat = new T[len];
-    predat = new T[len];
+    int len = fileSize(infile)/sizeof(T);
+    // Create dynamic array
+    T* indat = new T[len];
     // Move the pointer to the beggining of the 2 file
     infile.seekg(0, std::ios::beg);
-    prefile.seekg(0, std::ios::end);
-    // read the 2 file due to block
-    T dat;
-    while(!infile.end())
-    {
-        infile.read(reinterpret_cast<const char *>(indat++), len*sizeof(T));
-    }
-    while(! prefile.end())
-    {
-        prefile.read(reinterpret_cast<const char *>(predat++), len*sizeof(T));
-    }    
-    return len;
+    // Read the inorder file
+    while(infile.read((char*)(indat + size), sizeof(T)))
+        size++;
+    infile.close();
+    return indat;
+}
+
+// Function to read the preorer file
+template <typename T>
+T* AVL<T>::readPreFile(std::ifstream& prefile)
+{
+    // Get the size of the file to determine the length of the arrary
+    int size = 0;
+    int len = fileSize(prefile)/sizeof(T);
+    // Create dynamic array
+    T* predat = new T[len];
+    // Move the pointer to the beggining of the 2 file
+    prefile.seekg(0, std::ios::beg);
+    // Read the preorder file
+    while(prefile.read((char*)(predat + size), sizeof(T)))
+        size++;
+    prefile.close();
+    return predat;
 }
 
 // Function to rebuild the tree from the inorder and preorder array of the tree
@@ -540,26 +561,13 @@ bool AVL<T>::rebuildTree()
         return false;
     }       
     // Initiate 2 array pointer
-    T* indat;
-    T* predat;
-    // Read the file and rebuild the array
-    int size = readTreeFile(indat, predat, infile, prefile);
-    // Close the 2 files
-    infile.close();
-    prefile.close();
-    // Print the arrays for debug
-    std::cout<<"Inorder array: ";
-    for(int i = 0; i < size; ++i)
-        std::cout<<*(indat + i)<<" ";
-    std::cout<<std::endl;
-    std::cout<<"Preorder array: ";
-    for(int i = 0; i < size; ++i)
-        std::cout<<*(predat + i)<<" ";
-    std::cout<<std::endl;
+    T* indat = readInFile(infile);
+    T* predat = readPreFile(prefile);
+
 
     // Delete 2 dynamic arrays
-    delete[] indat;
-    delete[] predat;
+    delete indat;
+    delete predat;
     return true;
 }
 
