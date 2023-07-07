@@ -547,7 +547,39 @@ T* AVL<T>::readPreFile(std::ifstream& prefile)
     return predat;
 }
 
+// Function to get the index of a node in the inorder
+template <typename T>
+int AVL<T>::inorderIndex(T* indat, int start, int end, T data)
+{
+    for(int i = start; i < end; ++i)
+    {
+        if(*(indat + i) == data)
+            return i;
+    }
+}
+
 // Function to rebuild the tree from the inorder and preorder array of the tree
+template <typename T>
+Node<T>* AVL<T>::rebuildTree(T* indat, T* predat, int start, int end)
+{
+    static int preIndex = 0;
+    // Check for the validity of the input
+    if(start > end)
+        return NULL;
+    // Create the new node from the preorder array element
+    Node<T>* node = newNode(*(predat + (preIndex++)));
+    // Terminate the program if they loop through all the list
+    if(start == end)
+        return node;
+    // Find the index of the current node in the inorder array
+    int inIndex = inorderIndex(indat, start, end, node->data);
+    // Recursively build the left branch and the right branch of the tree
+    node->left = rebuildTree(indat, predat, start, inIndex - 1);
+    node->right = rebuildTree(indat, predat, inIndex + 1, end);
+    return node;
+}
+
+// Function to rebuild generally
 template <typename T>
 bool AVL<T>::rebuildTree()
 {
@@ -559,11 +591,24 @@ bool AVL<T>::rebuildTree()
     {
         std::cout<<"ERROR: unable to read to file"<<std::endl;
         return false;
-    }       
+    }
+
     // Initiate 2 array pointer
     T* indat = readInFile(infile);
     T* predat = readPreFile(prefile);
 
+    // Get the size of the tree from the file
+    std::ifstream infile_size("indata.dat", std::ios::in | std::ios::binary);
+    if(!infile_size.is_open())
+    {
+        std::cout<<"ERROR: unable to open file"<<std::endl;
+        return false;
+    }
+    int len = fileSize(infile_size)/sizeof(T);
+    infile_size.close();
+
+    // Rebuild the tree
+    root = rebuildTree(indat, predat, 0, len -1);
 
     // Delete 2 dynamic arrays
     delete indat;
@@ -575,10 +620,11 @@ int main()
 {
     // Initiate the AVL tree
     AVL<int> avltree;
-    int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 330, 37, 65, 41, 26, 98, 100, 103, 77};
-    // Insert node
-    for(int i = 0; i < sizeof(random)/4; ++i)
-        avltree.insertNode(random[i]);
+    // int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 330, 37, 65, 41, 26, 98, 100, 103, 77};
+    // // Insert node
+    // for(int i = 0; i < sizeof(random)/4; ++i)
+    //     avltree.insertNode(random[i]);
+    avltree.rebuildTree();
     // Print the tree
     avltree.printTree();
     // Search for a few node
@@ -599,6 +645,7 @@ int main()
     avltree.preorderTraverse();
     std::cout<<"Save the tree "<<(avltree.treeSave() ? "SUCCESSED" : "FAILED")<<std::endl;
     avltree.rebuildTree();
+    
     // String version
     // AVL<std::string> avltree;
     // //int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 37, 65, 41, 26, 98, 100, 103, 77};

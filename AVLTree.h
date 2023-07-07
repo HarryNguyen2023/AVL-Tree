@@ -36,6 +36,8 @@ class AVL:public Node<T>
         size_t fileSize(std::ifstream& file);
         T* readInFile(std::ifstream& infile);
         T* readPreFile(std::ifstream& prefile);
+        int inorderIndex(T* indat, int start, int end, T data);
+        Node<T>* rebuildTree(T* indat, T* predat, int start, int end);
     public:        
         void printTree();            
         void insertNode(T data);
