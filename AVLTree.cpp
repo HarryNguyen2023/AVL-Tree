@@ -449,6 +449,120 @@ void AVL<T>::preorderTraverse()
     std::cout<<std::endl;
 }
 
+// Function to save the tree in the inorder
+template <typename T>
+bool AVL<T>::inorderSave(Node<T>* node, std::ofstream& infile)
+{
+    if(node == NULL)
+        return true;
+    inorderSave(node->left, infile);
+    infile.write(reinterpret_cast<const char *>(&node->data), sizeof(T));
+    inorderSave(node->right, infile);
+}
+
+// Function to save the tree in the preorder
+template <typename T>
+bool AVL<T>::preorderSave(Node<T>* node, std::ofstream& prefile)
+{
+    if(node == NULL)
+        return true;
+    prefile.write(reinterpret_cast<const char *>(&node->data), sizeof(T));
+    preorderSave(node->left, prefile);
+    preorderSave(node->right, prefile);
+}
+
+// Function to generally save the tree into the file
+template <typename T>
+bool AVL<T>::treeSave()
+{
+    // Initiate 2 files to save the tree
+    std::ofstream infile("indata.dat", std::ios::out | std::ios:: binary);
+    std::ofstream prefile("predate.dat", std::ios::out | std::ios::binary);
+    // Check if both file is open
+    if(!infile.is_open() || !prefile.is_open())
+        return false;
+    // Save the tree in 2 different orders
+    inorderSave(root, infile);
+    infile.close();
+    preorderSave(root, prefile);
+    prefile.close();
+    return true;
+}
+
+// Function to get the size of a file
+template <typename T>
+int AVL<T>::fileSize(std::ifstream& file)
+{
+    std::streampos begin, end;
+    begin = file.tellg();
+    file.seekg(0, std::ios::end);
+    end = file.tellg();
+    return end - begin;
+}
+
+// Function to read the file and construct 2 lists of inorder and preorder
+template <typename T>
+int AVL<T>::readTreeFile(T* indat, T* predat, std::ifstream& infile, std::ifstream& prefile)
+{
+    // Get the size of the file to determine the length of the arrary
+    int size = 0;
+    const int len = fileSize(infile)/sizeof(T);
+    // Create 2 dynamic arrays for 2 orders of the tree
+    indat = new T[len];
+    predat = new T[len];
+    // Move the pointer to the beggining of the 2 file
+    infile.seekg(0, std::ios::beg);
+    prefile.seekg(0, std::ios::end);
+    // read the 2 file due to block
+    T dat;
+    while(!infile.end())
+    {
+        infile.read(reinterpret_cast<const char *>(indat++), len*sizeof(T));
+    }
+    while(! prefile.end())
+    {
+        prefile.read(reinterpret_cast<const char *>(predat++), len*sizeof(T));
+    }    
+    return len;
+}
+
+// Function to rebuild the tree from the inorder and preorder array of the tree
+template <typename T>
+bool AVL<T>::rebuildTree()
+{
+    // Initiate the streams to read the saved files
+    std::ifstream infile("indata.dat", std::ios::in | std::ios::binary);
+    std::ifstream prefile("predata.dat", std::ios::in | std::ios::binary);
+    // Check if the file is ready to be read
+    if(!infile.is_open() || !prefile.is_open())
+    {
+        std::cout<<"ERROR: unable to read to file"<<std::endl;
+        return false;
+    }       
+    // Initiate 2 array pointer
+    T* indat;
+    T* predat;
+    // Read the file and rebuild the array
+    int size = readTreeFile(indat, predat, infile, prefile);
+    // Close the 2 files
+    infile.close();
+    prefile.close();
+    // Print the arrays for debug
+    std::cout<<"Inorder array: ";
+    for(int i = 0; i < size; ++i)
+        std::cout<<*(indat + i)<<" ";
+    std::cout<<std::endl;
+    std::cout<<"Preorder array: ";
+    for(int i = 0; i < size; ++i)
+        std::cout<<*(predat + i)<<" ";
+    std::cout<<std::endl;
+
+    // Delete 2 dynamic arrays
+    delete[] indat;
+    delete[] predat;
+    return true;
+}
+
 int main()
 {
     // Initiate the AVL tree
@@ -475,6 +589,8 @@ int main()
     avltree.printZigZag();
     avltree.inorderTraverse();
     avltree.preorderTraverse();
+    std::cout<<"Save the tree "<<(avltree.treeSave() ? "SUCCESSED" : "FAILED")<<std::endl;
+    avltree.rebuildTree();
     // String version
     // AVL<std::string> avltree;
     // //int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 37, 65, 41, 26, 98, 100, 103, 77};

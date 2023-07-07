@@ -1,3 +1,4 @@
+#include <fstream>
 // Define the class for a node in the tree
 template <class T>
 class Node
@@ -29,7 +30,11 @@ class AVL:public Node<T>
         T findMax(Node<T>* node);
         int findSize(Node<T>* node);
         void inorderTraverse(Node<T>* node);
+        bool inorderSave(Node<T>* node, std::ofstream& infile);
         void preorderTraverse(Node<T>* node);
+        bool preorderSave(Node<T>* node, std::ofstream& prefile); 
+        int fileSize(std::ifstream& file);
+        int readTreeFile(T* inlist, T* prelist, std::ifstream& infile, std::ifstream& prefile);
     public:        
         void printTree();            
         void insertNode(T data);
@@ -42,4 +47,6 @@ class AVL:public Node<T>
         void printZigZag();
         void inorderTraverse();
         void preorderTraverse();
+        bool treeSave();
+        bool rebuildTree();
 };
