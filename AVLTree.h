@@ -1,4 +1,32 @@
 #include <fstream>
+
+// Define s custom structure type
+typedef struct Infor
+{
+    std::string name;
+    std::string pass;
+    int grade;
+
+    public:
+    // Function to overwrite the operator equal == for structure use
+    bool operator==(const Infor& other)
+    {
+        return name == other.name && pass == other.pass && grade == other.grade;
+    }
+
+    // Function to overwrite the operator > for structure use
+    bool operator>(const Infor& other)
+    {
+        return name > other.name;
+    }
+
+    // Function to overwrite the operator < for structure use
+    bool operator<(const Infor& other)
+    {
+        return name < other.name;
+    }
+}Infor;
+
 // Define the class for a node in the tree
 template <class T>
 class Node

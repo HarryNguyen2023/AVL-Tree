@@ -644,7 +644,6 @@ int main()
     avltree.inorderTraverse();
     avltree.preorderTraverse();
     std::cout<<"Save the tree "<<(avltree.treeSave() ? "SUCCESSED" : "FAILED")<<std::endl;
-    avltree.rebuildTree();
     
     // String version
     // AVL<std::string> avltree;
@@ -663,6 +662,60 @@ int main()
     // avltree.delNode("Nick");
     // // Display
     // avltree.printTree();
+
+    // Structure version 
+    // Infor Gia;
+    // Gia.name = "Gia";
+    // Gia.pass = "GialoveTran";
+    // Gia.grade = 21;
+
+    // Infor Tran;
+    // Tran.name = "Tran";
+    // Tran.pass = "TranloveGia";
+    // Tran.grade = 19;
+
+    // Infor Khoa;
+    // Khoa.name = "Khoa";
+    // Khoa.pass = "Khoarobot";
+    // Khoa.grade = 21;
+
+    // Infor Khoi;
+    // Khoi.name = "Khoi";
+    // Khoi.pass = "Khoi1018";
+    // Khoi.grade = 21;
+
+    // Infor Duy;
+    // Duy.name = "Duy";
+    // Duy.pass = "Duyrobot";
+    // Duy.grade = 21;
+
+    // Infor Nam;
+    // Nam.name = "Nam";
+    // Nam.pass = "NamSin";
+    // Nam.grade = 21;
+
+    // AVL<Infor> avltree;
+    // avltree.insertNode(Gia);
+    // avltree.insertNode(Tran);
+    // avltree.insertNode(Khoa);
+    // avltree.insertNode(Khoi);
+    // avltree.insertNode(Duy);
+    // avltree.insertNode(Nam);
+
+    // // Search the node in the tree
+    // std::cout<<"Node Gia is "<<(avltree.searchNode(Gia) ? "" : "not ")<<"in the tree"<<std::endl;
+    // std::cout<<"Node Tran is "<<(avltree.searchNode(Tran) ? "" : "not ")<<"in the tree"<<std::endl;
+
+    // // Create new node and search
+    // Infor Phu;
+    // Phu.name = "Abi";
+    // Phu.pass = "PhuGermany";
+    // Phu.grade = 22;
+
+    // avltree.insertNode(Phu);
+    // std::cout<<"Node Phu is "<<(avltree.searchNode(Phu) ? "" : "not ")<<"in the tree"<<std::endl;
+    // avltree.delNode(Phu);
+    // std::cout<<"Node Phu is "<<(avltree.searchNode(Phu) ? "" : "not ")<<"in the tree"<<std::endl;
 
     return 0;
 }
