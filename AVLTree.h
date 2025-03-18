@@ -1,4 +1,8 @@
+#ifndef AVL_TREE_H
+#define AVL_TREE_H
+
 #include <fstream>
+#include <string>
 
 // Define s custom structure type
 typedef struct Infor
@@ -81,3 +85,5 @@ class AVL:public Node<T>
         bool treeSave();
         bool rebuildTree();
 };
+
+#endif
