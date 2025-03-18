@@ -556,6 +556,7 @@ int AVL<T>::inorderIndex(T* indat, int start, int end, T data)
         if(*(indat + i) == data)
             return i;
     }
+    return 0;
 }
 
 // Function to rebuild the tree from the inorder and preorder array of the tree
@@ -620,11 +621,11 @@ int main()
 {
     // Initiate the AVL tree
     AVL<int> avltree;
-    // int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 330, 37, 65, 41, 26, 98, 100, 103, 77};
-    // // Insert node
-    // for(int i = 0; i < sizeof(random)/4; ++i)
-    //     avltree.insertNode(random[i]);
-    avltree.rebuildTree();
+    int random[] = {33, 0, 5, 7 ,3 ,2, 10, 16, 13, 28, 330, 37, 65, 41, 26, 98, 100, 103, 77};
+    // Insert node
+    for(int i = 0; i < sizeof(random)/4; ++i)
+        avltree.insertNode(random[i]);
+    // avltree.rebuildTree();
     // Print the tree
     avltree.printTree();
     // Search for a few node
